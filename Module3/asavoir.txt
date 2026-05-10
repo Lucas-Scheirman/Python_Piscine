@@ -1,0 +1,87 @@
+# ============================================================
+# CHEATSHEET DICTIONNAIRE
+# ============================================================
+
+# CRÉER
+# inventory = {}                       → vide
+# inventory = {"sword": 1}             → avec valeurs
+
+# AJOUTER / MODIFIER
+# inventory["sword"] = 1               → ajoute ou modifie
+# inventory.update({"magic": 1})       → ajoute depuis un autre dict
+
+# ACCÉDER À UNE VALEUR
+# inventory["sword"]                   → 1 (KeyError si n'existe pas)
+# inventory.get("sword")               → 1 (None si n'existe pas)
+
+# SUPPRIMER
+# del inventory["sword"]               → supprime la clé
+# inventory.pop("sword")               → supprime et retourne la valeur
+
+# PARCOURIR
+# for key in inventory:                → parcourt les clés
+# for key in inventory.keys():         → pareil
+# for value in inventory.values():     → parcourt les valeurs
+# for key, value in inventory.items(): → parcourt clé ET valeur
+
+# VÉRIFIER
+# "sword" in inventory                 → True/False
+# len(inventory)                       → nombre de clés
+
+# CALCULER
+# sum(inventory.values())              → total des valeurs
+# max(inventory, key=inventory.get)    → clé avec la plus grande valeur
+# min(inventory, key=inventory.get)    → clé avec la plus petite valeur
+# get() récupère la valeur de chaque clé
+# max/min parcourt les clés, compare les valeurs, retourne la clé du plus grand/petit
+
+# EXTRAIRE
+# list(inventory.keys())               → ['sword', 'potion', ...]
+# list(inventory.values())             → [1, 5, ...]
+
+# ============================================================
+# METHODE 2 — slice [1:]
+# On coupe la liste a partir de l'index 1, le nom du programme disparait
+# sys.argv[1:] = ["hello", "world"]  sans "programme.py"
+# ============================================================
+# args = sys.argv[1:]
+# for i, arg in enumerate(args, start=1):
+#     print(f"Argument {i}: {arg}")
+
+# ============================================================
+# METHODE 3 — enumerate
+# enumerate donne l'index ET la valeur en meme temps
+# start=1 fait commencer le compteur a 1 pour l'affichage
+# ============================================================
+# for i, arg in enumerate(sys.argv[1:], start=1):
+#     print(f"Argument {i}: {arg}")
+
+# ============================================================
+# METHODE 4 — del
+# On copie la liste pour ne pas modifier sys.argv original
+# del supprime l'element a l'index 0 (nom du programme)
+# ============================================================
+# args = sys.argv.copy()
+# del args[0]
+# for i, arg in enumerate(args, start=1):
+#     print(f"Argument {i}: {arg}")
+
+# ============================================================
+# METHODE 5 — pop(0)
+# Comme del mais pop() enleve ET retourne l'element supprime
+# On s'en fiche de la valeur retournee, on veut juste l'enlever
+# ============================================================
+# args = sys.argv.copy()
+# args.pop(0)
+# for i, arg in enumerate(args, start=1):
+#     print(f"Argument {i}: {arg}")
+
+# ============================================================
+# METHODE 6 — range sur args coupe
+# On coupe la liste avec [1:], elle repart a l'index 0
+# args[0] = "hello", args[1] = "world" etc...
+# i sert a naviguer dans la liste, i+1 sert juste pour l'affichage
+# ============================================================
+# args = sys.argv[1:]
+# for i in range(len(args)):
+#     print(f"Argument {i+1}: {args[i]}")
