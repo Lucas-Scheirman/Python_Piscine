@@ -26,13 +26,21 @@ if __name__ == "__main__":
         print("Item most abundant: None - inventory is empty!")
         print("Item least abundant: None - inventory is empty!")
     else:
-        max_item_key = max(inventory, key=lambda k: inventory[k])
-        min_item_key = min(inventory, key=lambda k: inventory[k])
-        print(
-            f"Item most abundant: {max_item_key} with quantity {
-                inventory[max_item_key]}")
-        print(
-            f"Item least abundant: {min_item_key} with quantity {
-                inventory[min_item_key]}")
+        y = 0
+        for k, v in inventory.items():
+            if y == 0:
+                max_item_v = v
+                min_item_v = v
+                max_item_k = k
+                min_item_k = k
+                y = 1
+            if v > max_item_v:
+                max_item_v = v
+                max_item_k = k
+            if v < min_item_v:
+                min_item_v = v
+                min_item_k = k
+        print(f"Item most abundant: {max_item_k} with quantity {max_item_v}")
+        print(f"Item least abundant: {min_item_k} with quantity {min_item_v}")
     inventory.update({"magic_item": 1})
     print(f"Updated inventory: {inventory}")
