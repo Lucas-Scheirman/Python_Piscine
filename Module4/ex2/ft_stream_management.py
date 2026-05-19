@@ -1,8 +1,7 @@
 import sys
 
 if __name__ == "__main__":
-    n = len(sys.argv)
-    if n != 2:
+    if len(sys.argv) != 2:
         print(f"Usage: {sys.argv[0]} <file>")
     else:
         print("=== Cyber Archives Recovery & Preservation ===")
@@ -20,7 +19,7 @@ if __name__ == "__main__":
             list_line = text.split("\n")
             list_line = [line + "#" for line in list_line]
             for line in list_line:
-                print(f"{line}")
+                print(line)
             print("---")
         except Exception as e:
             sys.stderr.write(

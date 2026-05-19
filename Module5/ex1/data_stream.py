@@ -113,22 +113,20 @@ class LogProcessor(DataProcessor):
         self._count = 0
         self._name = "Log Processor"
 
-    def validate(self, data: Any) -> bool:
+    def _is_log(self, data: Any) -> bool:
         return (
             isinstance(data, dict)
-            and all(
-                isinstance(k, str) and isinstance(v, str)
-                for k, v in data.items()
-            )
+            and all(isinstance(k, str) and isinstance(v, str)
+                    for k, v in data.items())
+            and "log_level" in data
+            and "log_message" in data
+        )
+
+    def validate(self, data: Any) -> bool:
+        return (
+            self._is_log(data)
             or isinstance(data, list)
-            and all(
-                isinstance(x, dict)
-                and all(
-                    isinstance(k, str) and isinstance(v, str)
-                    for k, v in x.items()
-                )
-                for x in data
-            )
+            and all(self._is_log(x) for x in data)
         )
 
     def ingest(self, data: dict[str, str] | list[dict[str, str]]) -> None:

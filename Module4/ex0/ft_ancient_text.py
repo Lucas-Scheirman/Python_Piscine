@@ -1,8 +1,7 @@
 import sys
 
 if __name__ == "__main__":
-    n = len(sys.argv)
-    if n != 2:
+    if len(sys.argv) != 2:
         print(f"Usage: {sys.argv[0]} <file>")
     else:
         print("=== Cyber Archives Recovery ===")

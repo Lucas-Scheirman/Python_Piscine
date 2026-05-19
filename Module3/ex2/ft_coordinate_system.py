@@ -3,22 +3,22 @@ import math
 
 def get_player_pos() -> tuple[float, float, float]:
     while True:
-        coords = input("Enter new coordinates as floats in format 'x,y,z':")
+        coords = input("Enter new coordinates as floats in format 'x,y,z': ")
         coords_lst = coords.split(",")
-        n = len(coords)
+        n = len(coords_lst)
         error = False
 
         if n != 3:
             print("Invalid syntax")
             continue
-        else:
-            for i in coords_lst:
-                try:
-                    float(i)
-                except ValueError as e:
-                    print(f"Error on parameter '{i}': {e}")
-                    error = True
-                    break
+        for i in coords_lst:
+            try:
+                float(i)
+            except ValueError as e:
+                print(f"Error on parameter '{i}': {e}")
+                error = True
+                break
+
         if not error:
             return (
                 float(coords_lst[0]),

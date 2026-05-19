@@ -3,12 +3,12 @@ import sys
 if __name__ == "__main__":
     print("=== Player Score Analytics ===")
     score_processed = []
-    total_player = len(sys.argv)
     total_score = 0
     for i in sys.argv[1:]:
         try:
-            score_processed.append(int(i))
-            total_score += int(i)
+            value = int(i)
+            score_processed.append(value)
+            total_score += value
         except ValueError:
             print(f"Invalid parameter: '{i}'")
 

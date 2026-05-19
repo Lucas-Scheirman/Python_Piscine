@@ -15,31 +15,31 @@ if __name__ == "__main__":
             except ValueError as e:
                 print(f"Quantity error for '{key_value[0]}': {e}")
 
-    total = sum(inventory.values())
+    total_quantity = sum(inventory.values())
     print(f"Got inventory: {inventory}")
     print(f"Item list: {list(inventory.keys())}")
     print(
-        f"Total quantity of the {len(inventory.values())} items: {total}")
+        f"Total quantity of the {len(inventory.values())} items: {total_quantity}")
     for key, value in inventory.items():
-        print(f"Item {key} represents {round((value / total) * 100, 1)}%")
+            print(f"Item {key} represents {round((value / total_quantity) * 100, 1)}%")
     if not inventory:
         print("Item most abundant: None - inventory is empty!")
         print("Item least abundant: None - inventory is empty!")
     else:
         y = 0
-        for k, v in inventory.items():
-            if y == 0:
-                max_item_v = v
-                min_item_v = v
-                max_item_k = k
-                min_item_k = k
+        for key, value in inventory.items():
+            if not y:
+                max_item_v = value
+                min_item_v = value
+                max_item_k = key
+                min_item_k = key
                 y = 1
-            if v > max_item_v:
-                max_item_v = v
-                max_item_k = k
-            if v < min_item_v:
-                min_item_v = v
-                min_item_k = k
+            if value > max_item_v:
+                max_item_v = value
+                max_item_k = key
+            if value < min_item_v:
+                min_item_v = value
+                min_item_k = key
         print(f"Item most abundant: {max_item_k} with quantity {max_item_v}")
         print(f"Item least abundant: {min_item_k} with quantity {min_item_v}")
     inventory.update({"magic_item": 1})
