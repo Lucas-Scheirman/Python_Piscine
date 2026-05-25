@@ -1,441 +1,166 @@
-# Théorie — Défense Orale Data Quest
+# Data Quest — Maîtriser les Collections Python
+
+---
+
+## Présentation du module
+
+Ce module a pour but de découvrir et maîtriser les principales structures de données
+de Python dans un contexte de jeu vidéo. Chaque exercice introduit une nouvelle
+structure de données et des concepts associés.
+
+Le fil conducteur est la construction d'une plateforme d'analyse de données de jeu :
+gestion des joueurs, des scores, des coordonnées, des achievements, de l'inventaire
+et des événements en temps réel.
 
 ---
 
 ## Règles générales
 
 - Python 3.10 ou plus
-- Respecter **flake8** (style de code, max 79 caractères par ligne)
-- **Type hints** sur toutes les fonctions, vérifiés avec `mypy`
-- Pas de fichiers I/O, tout en mémoire ou via arguments
+- Respecter le standard **flake8** (style de code, max 79 caractères par ligne)
+- **Type hints** obligatoires sur toutes les fonctions, vérifiés avec `mypy`
+- Pas de fichiers I/O, tout en mémoire ou via arguments en ligne de commande
+- Chaque exercice n'autorise que certaines fonctions et modules
 
 ---
 
-## Ex0 — sys.argv (listes)
+## Exercice 0 — Command Quest
 
-### C'est quoi sys.argv ?
-Liste des arguments passés en ligne de commande.
-`sys.argv[0]` est toujours le nom du programme, les vrais arguments commencent à `sys.argv[1]`.
-```python
-# python3 script.py hello world
-sys.argv[0]  # → 'script.py'
-sys.argv[1]  # → 'hello'
-sys.argv[2]  # → 'world'
-```
+**Fichier :** `ex0/ft_command_quest.py`
 
-### C'est quoi un slice ?
-Coupe une liste en donnant un index de début et/ou de fin :
-```python
-liste = [0, 1, 2, 3, 4]
-liste[1:]   # → [1, 2, 3, 4]  (enlève le premier)
-liste[:3]   # → [0, 1, 2]     (garde les 3 premiers)
-liste[-1]   # → 4             (dernier élément)
-liste[1:3]  # → [1, 2]        (du 2ème au 3ème)
-```
+**But :** Découvrir comment un programme reçoit des arguments depuis la ligne de
+commande via `sys.argv`.
 
-### C'est quoi enumerate ?
-Donne l'index ET la valeur en même temps dans une boucle :
-```python
-liste = ["alice", "bob", "charlie"]
+**Ce qu'on gère :**
+- Afficher le nom du programme (`sys.argv[0]`)
+- Afficher chaque argument reçu avec son index
+- Gérer le cas où aucun argument n'est fourni
+- Afficher le nombre total d'arguments
 
-for i, name in enumerate(liste, 1):  # commence à 1
-    print(i, name)
-# → 1 alice
-# → 2 bob
-# → 3 charlie
-```
-Le deuxième paramètre `, 1` change le départ du compteur.
-
-### C'est quoi pop() ?
-Supprime ET retourne un élément d'une liste :
-```python
-liste = ["a", "b", "c"]
-liste.pop(0)   # supprime et retourne "a" → liste = ["b", "c"]
-liste.pop()    # sans index → supprime le dernier
-```
-Différence avec `del` : `del` supprime seulement, sans retourner la valeur.
-
-### 5 façons d'ignorer sys.argv[0]
-L'évaluateur peut demander des alternatives, en connaître 2 ou 3 suffit.
-
-**1. range(1, n) — style C** *(solution utilisée)*
-```python
-for i in range(1, n):
-    print(sys.argv[i])
-```
-On commence la boucle à l'index 1, ce qui saute naturellement sys.argv[0].
-
-**2. Slice sys.argv[1:] — le plus pythonique**
-```python
-args = sys.argv[1:]  # nouvelle liste sans le premier élément
-for i, arg in enumerate(args, 1):
-    print(arg)
-```
-
-**3. enumerate direct sur le slice — compact**
-```python
-# sys.argv[1:] → ignore argv[0]
-# , 1          → compteur commence à 1
-for i, arg in enumerate(sys.argv[1:], 1):
-    print(arg)
-```
-
-**4. pop(0)**
-```python
-args = sys.argv.copy()  # copie pour ne pas modifier sys.argv
-args.pop(0)             # supprime le premier élément
-```
-
-**5. del args[0]**
-```python
-args = sys.argv.copy()
-del args[0]  # supprime sans retourner la valeur
-```
+**Concepts clés :** listes, `sys.argv`, slice, `len()`
 
 ---
 
-## Ex1 — try/except (listes)
+## Exercice 1 — Score Cruncher
 
-### C'est quoi try/except ?
-Permet de gérer les erreurs sans crasher le programme.
-Le code dans `try` s'exécute, si une erreur se produit on va dans `except`.
-```python
-try:
-    value = int("abc")    # plante ici → va dans except
-    print("jamais affiché")
-except ValueError as e:
-    print(f"Erreur: {e}") # on arrive ici
-```
+**Fichier :** `ex1/ft_score_analytics.py`
 
-### ValueError
-Levée quand une conversion de type échoue :
-```python
-int("abc")    # → ValueError
-float("xyz")  # → ValueError
-int("3.14")   # → ValueError (int ne gère pas les décimaux)
-```
+**But :** Traiter des scores de jeu passés en ligne de commande et calculer des
+statistiques, tout en gérant les erreurs de saisie.
 
-### Comportement si invalide
-`value` n'est jamais assigné, le code après le `try` ne s'exécute pas,
-on affiche l'erreur et on continue avec l'argument suivant. ✅
+**Ce qu'on gère :**
+- Ignorer les valeurs non numériques avec un message d'erreur (`try/except`)
+- Stocker les scores valides dans une liste
+- Calculer le total, la moyenne, le score max, le score min et l'écart
+- Afficher un message d'usage si aucun score valide n'est fourni
+
+**Concepts clés :** listes, `try/except`, `ValueError`, `sum()`, `max()`, `min()`
 
 ---
 
-## Ex2 — tuples
+## Exercice 2 — Position Tracker
 
-### C'est quoi un tuple ?
-Comme une liste mais **immutable** : une fois créé, on ne peut plus le modifier.
-C'est utile pour protéger des données contre les modifications accidentelles.
-```python
-mon_tuple = (1.0, 2.5, 3.0)
-mon_tuple[0]    # → 1.0  (lecture OK)
-mon_tuple[0] = 99  # → TypeError ! immutable
-```
+**Fichier :** `ex2/ft_coordinate_system.py`
 
-### Différence liste vs tuple
-```python
-# Liste → modifiable
-liste = [1, 2, 3]
-liste[0] = 99   # ✅ OK
+**But :** Gérer des coordonnées 3D sous forme de tuples et calculer des distances
+dans l'espace.
 
-# Tuple → immutable
-tup = (1, 2, 3)
-tup[0] = 99     # ❌ TypeError
-```
+**Ce qu'on gère :**
+- Demander des coordonnées à l'utilisateur au format `x,y,z`
+- Relancer la saisie en boucle jusqu'à recevoir un input valide
+- Gérer les erreurs de format (mauvais nombre de valeurs, valeurs non numériques)
+- Calculer la distance au centre (0,0,0)
+- Calculer la distance entre deux points avec la formule euclidienne 3D
 
-### Différence tuple vs parenthèses
-Les `()` servent aussi pour les fonctions, ce qui est différent des tuples :
-```python
-(1, 2, 3)   # → tuple
-set()       # → appel de fonction, crée un set vide
-int()       # → appel de fonction, crée un int
-```
+**Formule :** `math.sqrt((x2-x1)² + (y2-y1)² + (z2-z1)²)`
 
-### Formule distance euclidienne 3D
-C'est le théorème de Pythagore étendu en 3 dimensions.
-En 2D : `c² = a² + b²`
-En 3D on ajoute une dimension :
-
-Distance entre deux points (x1,y1,z1) et (x2,y2,z2) :
-```python
-math.sqrt((x2-x1)**2 + (y2-y1)**2 + (z2-z1)**2)
-```
-En clair : racine carrée de la somme des différences au carré.
-
-Distance au centre (0,0,0) → simplifié car x1=y1=z1=0 :
-```python
-math.sqrt(x**2 + y**2 + z**2)
-```
-
-### while True + input()
-Boucle infinie jusqu'à recevoir un input valide :
-```python
-while True:
-    raw = input("Entrez x,y,z: ")
-    # si valide → return (sort de la fonction ET de la boucle)
-    # si invalide → continue (reboucle automatiquement)
-```
-
-### Ctrl+D / Ctrl+Z
-- Linux/Mac → `Ctrl+D` envoie EOF (End Of File = fin de l'entrée)
-- Windows → `Ctrl+Z`
-- Fait crasher `input()` avec `EOFError` car il attendait une saisie
-  mais le flux est fermé → non géré dans notre code
+**Concepts clés :** tuples, immutabilité, `while True`, `input()`, `math.sqrt()`, `round()`
 
 ---
 
-## Ex3 — sets
+## Exercice 3 — Achievement Hunter
 
-### C'est quoi un set ?
-Collection **sans doublons** et **non ordonnée**.
-Chaque élément est unique, les doublons sont automatiquement ignorés.
-```python
-ma_liste = [1, 2, 2, 3, 3, 3]  # garde les doublons
-mon_set  = {1, 2, 2, 3, 3, 3}  # ignore les doublons
+**Fichier :** `ex3/ft_achievement_tracker.py`
 
-print(ma_liste)  # → [1, 2, 2, 3, 3, 3]
-print(mon_set)   # → {1, 2, 3}
-```
+**But :** Gérer des collections d'achievements uniques pour plusieurs joueurs et
+effectuer des opérations ensemblistes.
 
-### Notation set vs dict vs tuple
-```python
-{1, 2, 3}       # set  → éléments seuls
-{"a": 1, "b": 2} # dict → paires clé:valeur
-(1, 2, 3)       # tuple → parenthèses
-```
+**Ce qu'on gère :**
+- Générer aléatoirement des achievements pour 4 joueurs
+- Trouver tous les achievements distincts parmi tous les joueurs (union)
+- Trouver les achievements communs à tous les joueurs (intersection)
+- Trouver les achievements exclusifs à chaque joueur (différence)
+- Trouver les achievements manquants pour chaque joueur (différence inverse)
 
-### Opérations sur les sets
-```python
-alice   = {"Boss Slayer", "Untouchable", "Survivor"}
-bob     = {"Untouchable", "Speed Runner"}
-charlie = {"Untouchable", "Treasure Hunter"}
+**Opérations :**
+- `|` union → tout ce que tout le monde a
+- `&` intersection → ce que tout le monde a en commun
+- `-` différence → ce qu'un joueur a et pas les autres
 
-# | union → TOUT ce que tout le monde a (sans doublons)
-alice | bob  # → {"Boss Slayer", "Untouchable", "Survivor", "Speed Runner"}
-
-# & intersection → seulement ce que TOUT LE MONDE a en commun
-alice & bob & charlie  # → {"Untouchable"}
-
-# - différence → ce qu'alice a mais que personne d'autre n'a
-alice - bob - charlie  # → {"Boss Slayer", "Survivor"}
-
-# all - alice → ce qu'alice n'a pas mais qui existe
-all_achievements - alice  # → achievements manquants
-```
-
-### Pourquoi print(set()) affiche set() et pas {} ?
-`{}` est déjà réservé pour les **dictionnaires vides** en Python.
-Si Python affichait `{}` pour un set vide, on ne saurait pas si c'est un set ou un dict.
-```python
-{}       # → dict vide
-set()    # → set vide (notation claire pour éviter la confusion)
-```
-
-### random.sample
-Pioche n éléments **sans répétition** dans une liste :
-```python
-random.sample(["a", "b", "c", "d"], 2)  # → ["c", "a"]
-# jamais le même élément deux fois dans le résultat
-```
+**Concepts clés :** sets, opérations ensemblistes, `random.sample()`, `random.randint()`
 
 ---
 
-## Ex4 — dictionnaires
+## Exercice 4 — Inventory Master
 
-### C'est quoi un dict ?
-Collection de paires **clé:valeur**. L'accès par clé est instantané.
-```python
-inventory = {"sword": 1, "potion": 5}
-inventory["sword"]     # → 1
-inventory.keys()       # → toutes les clés
-inventory.values()     # → toutes les valeurs
-inventory.items()      # → paires (clé, valeur)
-```
+**Fichier :** `ex4/ft_inventory_system.py`
 
-### dict.update()
-Ajoute ou met à jour des clés dans le dictionnaire :
-```python
-inventory.update({"magic_item": 1})
-# → ajoute magic_item:1 à inventory
-```
+**But :** Construire un système d'inventaire à partir d'arguments en ligne de commande
+et effectuer des analyses sur les données.
 
-### Gestion des erreurs de parsing
-```python
-parts = arg.split(":")
-if len(parts) != 2:     # pas exactement un ':' → paramètre invalide
-if name in inventory:   # clé déjà présente → doublon
-int(quantity)           # ValueError si quantity n'est pas un entier
-```
+**Ce qu'on gère :**
+- Parser les arguments au format `nom:quantité`
+- Détecter et ignorer les paramètres invalides (mauvais format, doublons, quantité non entière)
+- Stocker l'inventaire dans un dictionnaire
+- Calculer la quantité totale et le pourcentage de chaque item
+- Trouver l'item le plus et le moins abondant (premier en cas d'égalité)
+- Ajouter un nouvel item avec `dict.update()`
 
-### Inventaire vide
-Si inventaire vide :
-- `sum({}.values())` → 0, pas de crash
-- La boucle `for` ne s'exécute jamais → pas de division par 0 ✅
-
-### Pourquoi dict plutôt que liste ?
-L'accès par clé est instantané dans un dict.
-Dans une liste il faut parcourir tous les éléments pour trouver un item.
+**Concepts clés :** dictionnaires, `dict.keys()`, `dict.values()`, `dict.items()`, `dict.update()`, parsing
 
 ---
 
-## Ex5 — générateurs
+## Exercice 5 — Stream Wizard
 
-### C'est quoi un générateur ?
-Fonction avec `yield` qui produit des valeurs **une par une** à la demande,
-au lieu de tout retourner d'un coup en mémoire.
-```python
-# Fonction normale → crée TOUT en mémoire
-def normale():
-    return [1, 2, 3, 4, 5]  # liste entière en mémoire
+**Fichier :** `ex5/ft_data_stream.py`
 
-# Générateur → produit UNE valeur à la fois
-def generateur():
-    yield 1  # produit 1, se met en pause
-    yield 2  # reprend, produit 2, se met en pause
-    yield 3  # reprend, produit 3, termine
-```
+**But :** Découvrir les générateurs Python pour produire des données à la demande
+sans surcharger la mémoire.
 
-### yield
-`yield` fait deux choses :
-1. Retourne la valeur au code qui a appelé `next()`
-2. Met la fonction **en pause** exactement là où il est
+**Ce qu'on gère :**
+- Créer un générateur infini `gen_event()` qui produit des tuples `(joueur, action)`
+- Appeler ce générateur 1000 fois avec `next()`
+- Créer une liste de 10 tuples depuis un nouveau générateur
+- Créer un générateur fini `consume_event()` qui pioche et supprime des éléments
+  de la liste jusqu'à ce qu'elle soit vide
+- Utiliser `consume_event()` directement dans un `for`
 
-Au prochain `next()`, la fonction reprend exactement après le `yield`.
-
-### next()
-Appelle le générateur une seule fois et récupère la valeur du prochain `yield` :
-```python
-gen = gen_event()
-next(gen)  # → ('alice', 'run')   démarre, pause au yield
-next(gen)  # → ('bob', 'sleep')   reprend, pause au yield
-next(gen)  # → ('dylan', 'grab')  reprend, pause au yield
-```
-Sans `next()` le générateur ne produit rien, il attend qu'on lui demande.
-
-### while True vs while liste
-```python
-# Générateur INFINI → while True, ne s'arrête jamais tout seul
-# Contrôlé de l'extérieur avec next() ou range()
-def gen_event():
-    while True:
-        yield (random.choice(players), random.choice(actions))
-
-# Générateur FINI → while liste, s'arrête quand la liste est vide
-# while liste = True si liste non vide, False si vide
-def consume_event(liste):
-    while liste:
-        yield liste.pop(random.randint(0, len(liste) - 1))
-```
-
-### pop(index)
-Supprime ET retourne l'élément à l'index donné :
-```python
-liste = ["a", "b", "c"]
-liste.pop(1)  # → "b", liste = ["a", "c"]
-```
-
-### Pourquoi les générateurs économisent la mémoire ?
-```python
-# Liste → 1 million de tuples créés EN MÊME TEMPS en mémoire ❌
-events = [(random.choice(p), random.choice(a)) for _ in range(1000000)]
-
-# Générateur → UN seul tuple créé à la fois ✅
-def gen_event():
-    while True:
-        yield (random.choice(players), random.choice(actions))
-```
-
-### Generator[X, Y, Z] — type hint
-```python
-Generator[tuple[str, str], None, None]
-#         ↑ YieldType      ↑ SendType  ↑ ReturnType
-```
-- **YieldType** → type de ce que yield produit
-- **SendType** → type de ce qu'on envoie avec `.send()` (None = non utilisé)
-- **ReturnType** → type du return final (None = pas de return)
-
-### .send() — fonctionnalité avancée
-Envoie une valeur dans le générateur pendant qu'il tourne.
-Non utilisé dans ce projet mais bon à connaître.
+**Concepts clés :** générateurs, `yield`, `next()`, `while True`, `while liste`, `pop()`, mémoire
 
 ---
 
-## Ex6 — compréhensions
+## Exercice 6 — Data Alchemist
 
-### C'est quoi une compréhension ?
-Façon courte et pythonique d'écrire une boucle en une ligne.
+**Fichier :** `ex6/ft_data_alchemist.py`
 
-### List comprehension
-```python
-# Boucle normale
-result = []
-for x in liste:
-    if condition:
-        result.append(expression)
+**But :** Maîtriser les compréhensions Python pour transformer et filtrer des données
+de façon concise et élégante.
 
-# Compréhension → même chose en 1 ligne
-result = [expression for x in liste if condition]
-```
+**Ce qu'on gère :**
+- List comprehension pour capitaliser tous les noms
+- List comprehension avec filtre pour garder seulement les noms déjà capitalisés
+- Dict comprehension pour associer un score aléatoire à chaque joueur
+- Dict comprehension avec filtre pour garder seulement les scores au-dessus de la moyenne
 
-### Dict comprehension
-```python
-# Clé: valeur pour chaque élément
-scores = {name: random.randint(0, 1000) for name in players}
-
-# Avec filtre
-high = {name: score for name, score in scores.items() if score > average}
-```
-
-### Set comprehension
-```python
-# Comme list comprehension mais avec {} → résultat sans doublons
-unique = {name.lower() for name in players}
-```
-
-### Syntaxe générale
-```python
-[expression for element in iterable if condition]       # liste
-{clé: valeur for element in iterable if condition}      # dict
-{expression for element in iterable if condition}       # set
-```
-
-### Règle flake8 — max 79 caractères
-Si la compréhension est trop longue, utiliser des parenthèses/accolades :
-```python
-# Trop long sur une ligne → on coupe avec des accolades
-high_scores = {
-    name: score
-    for name, score in scores.items()
-    if score > average
-}
-# C'est toujours une seule compréhension ✅
-```
+**Concepts clés :** list comprehension, dict comprehension, set comprehension, `sum()`, `round()`
 
 ---
 
-## Questions pièges possibles
+## Résumé des structures de données
 
-**Pourquoi utiliser un set plutôt qu'une liste ?**
-→ Le set supprime automatiquement les doublons et les opérations
-union/intersection/différence sont très rapides.
-
-**Pourquoi utiliser un tuple plutôt qu'une liste ?**
-→ Le tuple est immutable, il protège les données contre les modifications
-accidentelles. Idéal pour des coordonnées qui ne doivent pas changer.
-
-**Pourquoi utiliser un générateur plutôt qu'une liste ?**
-→ Le générateur économise la mémoire car il produit les valeurs une par une
-au lieu de tout stocker en même temps.
-
-**Pourquoi utiliser un dict plutôt qu'une liste ?**
-→ L'accès par clé est instantané dans un dict. Dans une liste il faut
-parcourir tous les éléments pour trouver ce qu'on cherche.
-
-**Quelle est la différence entre yield et return ?**
-→ `return` termine la fonction et retourne une valeur.
-`yield` met la fonction en pause et retourne une valeur, mais la fonction
-peut reprendre au prochain `next()`.
-
-**Quelle est la différence entre pop() et del ?**
-→ `pop()` supprime ET retourne l'élément.
-`del` supprime seulement, sans retourner la valeur.
+| Structure | Ordonné | Doublons | Mutable | Accès |
+|-----------|---------|----------|---------|-------|
+| list      | ✅ oui  | ✅ oui   | ✅ oui  | index |
+| tuple     | ✅ oui  | ✅ oui   | ❌ non  | index |
+| set       | ❌ non  | ❌ non   | ✅ oui  | aucun |
+| dict      | ✅ oui  | ❌ clés  | ✅ oui  | clé   |
