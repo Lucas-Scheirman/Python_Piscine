@@ -19,7 +19,6 @@ ALL_ACHIEVEMENTS = [
 
 
 def gen_player_achievements() -> set[str]:
-
     return set(
         random.sample(
             ALL_ACHIEVEMENTS,

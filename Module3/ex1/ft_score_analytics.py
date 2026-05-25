@@ -15,7 +15,7 @@ if __name__ == "__main__":
     if len(score_processed) == 0:
         print(
             f"No scores provided. Usage: python3 "
-            f"{sys.argv[0]} <score1> <score2> ...\n")
+            f"{sys.argv[0].split('/')[-1]} <score1> <score2> ...\n")
     else:
         print(f"Scores processed: {score_processed}")
         print(f"Total players: {len(score_processed)}")

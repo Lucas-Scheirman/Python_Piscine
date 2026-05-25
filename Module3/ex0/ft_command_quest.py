@@ -3,7 +3,7 @@ import sys
 if __name__ == "__main__":
     n = len(sys.argv)
     print("=== Command Quest ===")
-    print(f"Program name: {sys.argv[0]}")
+    print(f"Program name: {sys.argv[0].split('/')[-1]}")
     if (n < 2):
         print("No arguments provided!")
     else:

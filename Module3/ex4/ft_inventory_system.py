@@ -6,7 +6,7 @@ if __name__ == "__main__":
     for i in sys.argv[1:]:
         key_value = i.split(":")
         if (len(key_value) != 2):
-            print(f"Error - invalid parameter '{key_value[0]}'")
+            print(f"Error - invalid parameter '{i}'")
         elif (key_value[0] in inventory):
             print(f"Redundant item '{key_value[0]}' - discarding")
         else:
@@ -19,9 +19,11 @@ if __name__ == "__main__":
     print(f"Got inventory: {inventory}")
     print(f"Item list: {list(inventory.keys())}")
     print(
-        f"Total quantity of the {len(inventory.values())} items: {total_quantity}")
+        f"Total quantity of the {len(inventory.values())}"
+        f" items: {total_quantity}")
     for key, value in inventory.items():
-            print(f"Item {key} represents {round((value / total_quantity) * 100, 1)}%")
+        print(f"Item {key} represents"
+              f" {round((value / total_quantity) * 100, 1)}%")
     if not inventory:
         print("Item most abundant: None - inventory is empty!")
         print("Item least abundant: None - inventory is empty!")

@@ -39,9 +39,9 @@ if __name__ == "__main__":
 
     print("Get a second set of coordinates")
     pos2 = get_player_pos()
-    dist = math.sqrt(
+    dist = round(math.sqrt(
         (pos2[0] - pos1[0]) ** 2
         + (pos2[1] - pos1[1]) ** 2
-        + (pos2[2] - pos1[2]) ** 2
+        + (pos2[2] - pos1[2]) ** 2), 4
     )
     print(f"Distance between the 2 sets of coordinates: {round(dist, 4)}")
