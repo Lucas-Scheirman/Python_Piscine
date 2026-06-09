@@ -44,6 +44,6 @@ if __name__ == "__main__":
                     sys.stderr.write(
                         f"[STDERR] Error opening file '{file_name}': {e}\n")
                     print("Data not saved.")
-    except (KeyboardInterrupt, EOFError):
+    except (KeyboardInterrupt):
         print("\nKeyboard interrupt by user")
         sys.exit(1)
