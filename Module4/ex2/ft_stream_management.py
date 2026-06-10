@@ -4,6 +4,7 @@ if __name__ == "__main__":
     try:
         if len(sys.argv) != 2:
             print(f"Usage: {sys.argv[0]} <file>")
+            sys.exit(1)
         else:
             print("=== Cyber Archives Recovery & Preservation ===")
             print(f"Accessing file '{sys.argv[1]}'")
@@ -16,12 +17,15 @@ if __name__ == "__main__":
                 file.close()
                 print(f"File '{sys.argv[1]}' closed.")
                 print("Transform data:")
-                print("---")
-                list_line = text.split("\n")
-                list_line = [line + "#" for line in list_line]
-                for line in list_line:
-                    print(line)
-                print("---")
+                print("---\n")
+                if text == "":
+                    list_line = []
+                else:
+                    list_line = text.rstrip("\n").split("\n")
+                    list_line = [line + "#" for line in list_line]
+                    for line in list_line:
+                        print(line)
+                print("\n---")
             except Exception as e:
                 sys.stderr.write(
                     f"[STDERR] Error opening file '{sys.argv[1]}': {e}\n")
