@@ -1,5 +1,6 @@
 import sys
 
+
 if __name__ == "__main__":
     try:
         if len(sys.argv) != 2:
@@ -25,12 +26,9 @@ if __name__ == "__main__":
             except Exception as e:
                 print(f"Error opening file '{sys.argv[1]}': {e}\n")
                 sys.exit(1)
-
-            
             file_name = input("Enter new file name (or empty): ")
             if not file_name:
                 print("Not saving data.")
-            
             else:
                 try:
                     print(f"Saving data to '{file_name}'")
@@ -47,4 +45,3 @@ if __name__ == "__main__":
     except (KeyboardInterrupt, EOFError):
         print("\nKeyboard interrupt by user")
         sys.exit(1)
-        
