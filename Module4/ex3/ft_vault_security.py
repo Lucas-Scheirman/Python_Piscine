@@ -1,4 +1,3 @@
-import sys
 
 
 def secure_archive(file: str, mode: str = "r",
