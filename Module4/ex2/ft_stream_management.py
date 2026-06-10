@@ -1,10 +1,9 @@
 import sys
 
-
 if __name__ == "__main__":
     try:
         if len(sys.argv) != 2:
-            raise ValueError(f"Usage: {sys.argv[0]} <file>")
+            print(f"Usage: {sys.argv[0]} <file>")
         else:
             print("=== Cyber Archives Recovery & Preservation ===")
             print(f"Accessing file '{sys.argv[1]}'")
@@ -24,9 +23,12 @@ if __name__ == "__main__":
                     print(line)
                 print("---")
             except Exception as e:
-                print(f"Error opening file '{sys.argv[1]}': {e}\n")
+                sys.stderr.write(
+                    f"[STDERR] Error opening file '{sys.argv[1]}': {e}\n")
                 sys.exit(1)
-            file_name = input("Enter new file name (or empty): ")
+            sys.stdout.write("Enter new file name (or empty): ")
+            sys.stdout.flush()
+            file_name = sys.stdin.readline().strip()
             if not file_name:
                 print("Not saving data.")
             else:
@@ -37,14 +39,9 @@ if __name__ == "__main__":
                     file.close()
                     print(f"Data saved in file '{file_name}'.")
                 except Exception as e:
-                    print(f"Error opening file '{file_name}': {e}")
-                    sys.exit(1)
-    except ValueError as e:
-        print(f"{e}")
-        sys.exit(1)
+                    sys.stderr.write(
+                        f"[STDERR] Error opening file '{file_name}': {e}\n")
+                    print("Data not saved.")
     except KeyboardInterrupt:
         print("\nKeyboard interrupt by user")
-        sys.exit(1)
-    except EOFError:
-        print("\nEOF error")
         sys.exit(1)
