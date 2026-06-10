@@ -5,6 +5,7 @@ from typing import Any
 class DataProcessor(ABC):
     def __init__(self) -> None:
         self._data: list[tuple[int, str]] = []
+        self._count = 0
 
     @abstractmethod
     def validate(self, data: Any) -> bool:
@@ -14,103 +15,78 @@ class DataProcessor(ABC):
     def ingest(self, data: Any) -> None:
         pass
 
+    def _store(self, value: str) -> None:
+        self._data.append((self._count, value))
+        self._count += 1
+
     def output(self) -> tuple[int, str]:
+        if not self._data:
+            raise IndexError("No data available in processor")
         return self._data.pop(0)
 
 
 class NumericProcessor(DataProcessor):
-    def __init__(self) -> None:
-        self._data: list[tuple[int, str]] = []
-        self._count = 0
-
     def validate(self, data: Any) -> bool:
-        return (
-            isinstance(data, (int, float))
-            and not isinstance(data, bool)
-            or isinstance(data, list)
-            and all(
+        if isinstance(data, bool):
+            return False
+        if isinstance(data, (int, float)):
+            return True
+        if isinstance(data, list):
+            return all(
                 isinstance(x, (int, float)) and not isinstance(x, bool)
                 for x in data
             )
-        )
+        return False
 
     def ingest(self, data: int | float | list[int | float]) -> None:
         if not self.validate(data):
             raise ValueError("Improper numeric data")
-        if isinstance(data, list):
-            for item in data:
-                self._data.append((self._count, str(item)))
-                self._count += 1
-        else:
-            self._data.append((self._count, str(data)))
-            self._count += 1
+        items = data if isinstance(data, list) else [data]
+        for item in items:
+            self._store(str(item))
 
 
 class TextProcessor(DataProcessor):
-    def __init__(self) -> None:
-        self._data: list[tuple[int, str]] = []
-        self._count = 0
-
     def validate(self, data: Any) -> bool:
-        return (
-            isinstance(data, str)
-            or isinstance(data, list)
-            and all(isinstance(x, str) for x in data)
-        )
+        if isinstance(data, str):
+            return True
+        if isinstance(data, list):
+            return all(isinstance(x, str) for x in data)
+        return False
 
     def ingest(self, data: str | list[str]) -> None:
         if not self.validate(data):
             raise ValueError("Improper text data")
-        if isinstance(data, list):
-            for item in data:
-                self._data.append((self._count, item))
-                self._count += 1
-        else:
-            self._data.append((self._count, data))
-            self._count += 1
+        items = data if isinstance(data, list) else [data]
+        for item in items:
+            self._store(item)
 
 
 class LogProcessor(DataProcessor):
-    def __init__(self) -> None:
-        self._data: list[tuple[int, str]] = []
-        self._count = 0
-
     def _is_log(self, d: Any) -> bool:
         return (
             isinstance(d, dict)
-            and all(isinstance(k, str) and isinstance(v, str)
-                    for k, v in d.items())
+            and all(
+                isinstance(k, str) and isinstance(v, str)
+                for k, v in d.items()
+            )
             and "log_level" in d
             and "log_message" in d
         )
 
     def validate(self, data: Any) -> bool:
-        return (
-            self._is_log(data)
-            or isinstance(data, list)
-            and all(self._is_log(x) for x in data)
-        )
+        if self._is_log(data):
+            return True
+        if isinstance(data, list):
+            return all(self._is_log(x) for x in data)
+        return False
 
     def ingest(self, data: dict[str, str] | list[dict[str, str]]) -> None:
         if not self.validate(data):
             raise ValueError("Improper log data")
-        if isinstance(data, list):
-            for item in data:
-                self._data.append(
-                    (
-                        self._count,
-                        f"{item['log_level']}: {item['log_message']}",
-                    )
-                )
-                self._count += 1
-        else:
-            self._data.append(
-                (
-                    self._count,
-                    f"{data['log_level']}: {data['log_message']}",
-                )
-            )
-            self._count += 1
+        items = data if isinstance(data, list) else [data]
+        for item in items:
+            self._store(f"{item['log_level']}: {item['log_message']}")
 
 
 if __name__ == "__main__":
@@ -139,8 +115,8 @@ if __name__ == "__main__":
     test_num.ingest(data_num)
     print("Extracting 3 values...")
     for i in range(3):
-        output = test_num.output()
-        print(f"Numeric value {output[0]}: {output[1]}")
+        rank, value = test_num.output()
+        print(f"Numeric value {rank}: {value}")
     print("\n")
     print("Testing Text Processor...")
     test_text = TextProcessor()
@@ -150,13 +126,17 @@ if __name__ == "__main__":
         f"Trying to validate input '{value_test_int}': "
         f"{test_text.validate(value_test_int)}"
     )
+    print(
+        f"Trying to validate input '{value_test_str}': "
+        f"{test_text.validate(value_test_str)}"
+    )
     data_text = ["Hello", "Nexus", "World"]
     print(f"Processing data: {data_text}")
     test_text.ingest(data_text)
     print("Extracting 1 value...")
     for i in range(1):
-        output = test_text.output()
-        print(f"Text value {output[0]}: {output[1]}")
+        rank, value = test_text.output()
+        print(f"Text value {rank}: {value}")
     print("\n")
     print("Testing Log Processor...")
     test_log = LogProcessor()
@@ -164,6 +144,11 @@ if __name__ == "__main__":
     print(
         f"Trying to validate input '{value_test_str}': "
         f"{test_log.validate(value_test_str)}"
+    )
+    valid_log = {"log_level": "INFO", "log_message": "ok"}
+    print(
+        f"Trying to validate a valid log entry: "
+        f"{test_log.validate(valid_log)}"
     )
     data_log = [
         {"log_level": "NOTICE", "log_message": "Connection to server"},
@@ -173,5 +158,5 @@ if __name__ == "__main__":
     test_log.ingest(data_log)
     print("Extracting 2 values...")
     for i in range(2):
-        output = test_log.output()
-        print(f"Log entry {output[0]}: {output[1]}")
+        rank, value = test_log.output()
+        print(f"Log entry {rank}: {value}")

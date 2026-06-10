@@ -3,10 +3,10 @@ from typing import Any
 
 
 class DataProcessor(ABC):
-    def __init__(self) -> None:
+    def __init__(self, name: str) -> None:
         self._data: list[tuple[int, str]] = []
-        self._name: str = ""
-        self._count: int = 0
+        self._name = name
+        self._count = 0
 
     @abstractmethod
     def validate(self, data: Any) -> bool:
@@ -16,7 +16,16 @@ class DataProcessor(ABC):
     def ingest(self, data: Any) -> None:
         pass
 
+    def _store(self, value: str) -> None:
+        self._data.append((self._count, value))
+        self._count += 1
+
+    def get_stats(self) -> tuple[str, int, int]:
+        return (self._name, self._count, len(self._data))
+
     def output(self) -> tuple[int, str]:
+        if not self._data:
+            raise IndexError("No data available in processor")
         return self._data.pop(0)
 
 
@@ -29,13 +38,11 @@ class DataStream:
 
     def process_stream(self, stream: list[Any]) -> None:
         for element in stream:
-            find = False
-            for x in self._processors:
-                if x.validate(element):
-                    x.ingest(element)
-                    find = True
+            for proc in self._processors:
+                if proc.validate(element):
+                    proc.ingest(element)
                     break
-            if not find:
+            else:
                 print(
                     f"DataStream error - Can't process element"
                     f" in stream: {element}"
@@ -45,110 +52,86 @@ class DataStream:
         print("== DataStream statistics ==")
         if not self._processors:
             print("No processor found, no data")
-        else:
-            for proc in self._processors:
-                print(
-                    f"{proc._name}: total {proc._count} items processed"
-                    f", remaining {len(proc._data)} on processor"
-                )
+            return
+        for proc in self._processors:
+            name, total, remaining = proc.get_stats()
+            print(
+                f"{name}: total {total} items processed"
+                f", remaining {remaining} on processor"
+            )
 
 
 class NumericProcessor(DataProcessor):
     def __init__(self) -> None:
-        self._data: list[tuple[int, str]] = []
-        self._count = 0
-        self._name = "Numeric Processor"
+        super().__init__("Numeric Processor")
 
     def validate(self, data: Any) -> bool:
-        return (
-            isinstance(data, (int, float))
-            and not isinstance(data, bool)
-            or isinstance(data, list)
-            and all(
+        if isinstance(data, bool):
+            return False
+        if isinstance(data, (int, float)):
+            return True
+        if isinstance(data, list):
+            return all(
                 isinstance(x, (int, float)) and not isinstance(x, bool)
                 for x in data
             )
-        )
+        return False
 
     def ingest(self, data: int | float | list[int | float]) -> None:
         if not self.validate(data):
             raise ValueError("Improper numeric data")
-        if isinstance(data, list):
-            for item in data:
-                self._data.append((self._count, str(item)))
-                self._count += 1
-        else:
-            self._data.append((self._count, str(data)))
-            self._count += 1
+        items = data if isinstance(data, list) else [data]
+        for item in items:
+            self._store(str(item))
 
 
 class TextProcessor(DataProcessor):
     def __init__(self) -> None:
-        self._data: list[tuple[int, str]] = []
-        self._count = 0
-        self._name = "Text Processor"
+        super().__init__("Text Processor")
 
     def validate(self, data: Any) -> bool:
-        return (
-            isinstance(data, str)
-            or isinstance(data, list)
-            and all(isinstance(x, str) for x in data)
-        )
+        if isinstance(data, str):
+            return True
+        if isinstance(data, list):
+            return all(isinstance(x, str) for x in data)
+        return False
 
     def ingest(self, data: str | list[str]) -> None:
         if not self.validate(data):
             raise ValueError("Improper text data")
-        if isinstance(data, list):
-            for item in data:
-                self._data.append((self._count, item))
-                self._count += 1
-        else:
-            self._data.append((self._count, data))
-            self._count += 1
+        items = data if isinstance(data, list) else [data]
+        for item in items:
+            self._store(item)
 
 
 class LogProcessor(DataProcessor):
     def __init__(self) -> None:
-        self._data: list[tuple[int, str]] = []
-        self._count = 0
-        self._name = "Log Processor"
+        super().__init__("Log Processor")
 
     def _is_log(self, data: Any) -> bool:
         return (
             isinstance(data, dict)
-            and all(isinstance(k, str) and isinstance(v, str)
-                    for k, v in data.items())
+            and all(
+                isinstance(k, str) and isinstance(v, str)
+                for k, v in data.items()
+            )
             and "log_level" in data
             and "log_message" in data
         )
 
     def validate(self, data: Any) -> bool:
-        return (
-            self._is_log(data)
-            or isinstance(data, list)
-            and all(self._is_log(x) for x in data)
-        )
+        if self._is_log(data):
+            return True
+        if isinstance(data, list):
+            return all(self._is_log(x) for x in data)
+        return False
 
     def ingest(self, data: dict[str, str] | list[dict[str, str]]) -> None:
         if not self.validate(data):
             raise ValueError("Improper log data")
-        if isinstance(data, list):
-            for item in data:
-                self._data.append(
-                    (
-                        self._count,
-                        f"{item['log_level']}: {item['log_message']}",
-                    )
-                )
-                self._count += 1
-        else:
-            self._data.append(
-                (
-                    self._count,
-                    f"{data['log_level']}: {data['log_message']}",
-                )
-            )
-            self._count += 1
+        items = data if isinstance(data, list) else [data]
+        for item in items:
+            self._store(f"{item['log_level']}: {item['log_message']}")
 
 
 if __name__ == "__main__":
@@ -168,7 +151,7 @@ if __name__ == "__main__":
                 "log_level": "WARNING",
                 "log_message": "Telnet access! Use ssh instead",
             },
-            {"log_level": "INFO", "log_message": "User wil isconnected"},
+            {"log_level": "INFO", "log_message": "User wil is connected"},
         ],
         42,
         ["Hi", "five"],
