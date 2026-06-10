@@ -36,4 +36,3 @@ if __name__ == "__main__":
         print(secure_archive("new_file.txt", "w", result[1]))
     except KeyboardInterrupt:
         print("keyboard interrupt by user")
-        sys.exit(1)

@@ -21,6 +21,6 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"Error opening file '{sys.argv[1]}': {e}\n")
         sys.exit(1)
-    except (KeyboardInterrupt, EOFError):
+    except (KeyboardInterrupt):
         print("\nKeyboard interrupt by user")
         sys.exit(1)

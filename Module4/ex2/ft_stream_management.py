@@ -42,6 +42,9 @@ if __name__ == "__main__":
     except ValueError as e:
         print(f"{e}")
         sys.exit(1)
-    except (KeyboardInterrupt, EOFError):
+    except KeyboardInterrupt:
         print("\nKeyboard interrupt by user")
+        sys.exit(1)
+    except EOFError:
+        print("\nEOF error")
         sys.exit(1)
