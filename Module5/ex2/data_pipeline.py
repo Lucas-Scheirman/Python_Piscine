@@ -29,7 +29,7 @@ class DataProcessor(ABC):
         return self._data.pop(0)
 
     def extract(self, nb: int) -> list[tuple[int, str]]:
-        return [self.output() for _ in range(min(nb, len(self._data)))]
+        return [self.output() for i in range(min(nb, len(self._data)))]
 
 
 class ExportPlugin(Protocol):
@@ -40,7 +40,7 @@ class ExportPlugin(Protocol):
 class CSVExportPlugin:
     def process_output(self, data: list[tuple[int, str]]) -> None:
         print("CSV Output:")
-        print(",".join(value for _, value in data))
+        print(",".join(value for i, value in data))
 
 
 class JSONExportPlugin:
