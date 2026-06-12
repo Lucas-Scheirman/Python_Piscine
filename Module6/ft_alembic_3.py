@@ -6,4 +6,4 @@ if __name__ == "__main__":
         "Accessing alchemy/elements.py using "
         "'from ... import ...' structure"
     )
-    print(f"Testing create_earth: {create_air()}\n")
+    print(f"Testing create_air: {create_air()}\n")
