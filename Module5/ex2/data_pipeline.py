@@ -40,14 +40,25 @@ class ExportPlugin(Protocol):
 class CSVExportPlugin:
     def process_output(self, data: list[tuple[int, str]]) -> None:
         print("CSV Output:")
-        print(",".join(value for i, value in data))
+
+        values_only = []
+        for index, value in data:
+            values_only.append(value)
+
+        print(",".join(values_only))
 
 
 class JSONExportPlugin:
     def process_output(self, data: list[tuple[int, str]]) -> None:
         print("JSON Output:")
-        entries = ", ".join(f'"item_{key}": "{value}"' for key, value in data)
-        print("{" + entries + "}")
+
+        json_entries = []
+        for key, value in data:
+            entry = f'"item_{key}": "{value}"'
+            json_entries.append(entry)
+
+        formatted_string = ", ".join(json_entries)
+        print(f"{{{formatted_string}}}")
 
 
 class DataStream:
