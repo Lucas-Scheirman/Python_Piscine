@@ -5,4 +5,4 @@ if __name__ == "__main__":
     print("Using: 'import alchemy' structure to access potions")
     print(f"Testing strength_potion: {alchemy.strength_potion()}")
     print(f"Testing heal alias"
-          f": {alchemy.heal()}")  # type: ignore[attr-defined]
+          f": {alchemy.heal()}")  
