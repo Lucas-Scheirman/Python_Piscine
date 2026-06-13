@@ -24,7 +24,7 @@ def run_tournament(opponents: list[Opponent]) -> None:
             for j in range(i + 1, len(creatures)):
                 creature1, strategy1 = creatures[i]
                 creature2, strategy2 = creatures[j]
-                print("* Battle *")
+                print("\n* Battle *")
                 print(creature1.describe())
                 print("vs.")
                 print(creature2.describe())
@@ -36,24 +36,32 @@ def run_tournament(opponents: list[Opponent]) -> None:
 
 
 if __name__ == "__main__":
-    print("Tournament 0 (basic)")
-    print("[ (Flameling+Normal), (Healing+Defensive) ]")
-    run_tournament([
-        (FlameFactory(), NormalStrategy()),
-        (HealingCreatureFactory(), DefensiveStrategy()),
-    ])
+    try:
+        print("Tournament 0 (basic)")
+        print("[ (Flameling+Normal), (Healing+Defensive) ]")
+        run_tournament([
+            (FlameFactory(), NormalStrategy()),
+            (HealingCreatureFactory(), DefensiveStrategy()),
+        ])
 
-    print("Tournament 1 (error)")
-    print("[ (Flameling+Aggressive), (Healing+Defensive) ]")
-    run_tournament([
-        (FlameFactory(), AggressiveStrategy()),
-        (HealingCreatureFactory(), DefensiveStrategy()),
-    ])
+        print("\nTournament 1 (error)")
+        print("[ (Flameling+Aggressive), (Healing+Defensive) ]")
+        run_tournament([
+            (FlameFactory(), AggressiveStrategy()),
+            (HealingCreatureFactory(), DefensiveStrategy()),
+        ])
 
-    print("Tournament 2 (multiple)")
-    print("[ (Aquabub+Normal), (Healing+Defensive), (Transform+Aggressive) ]")
-    run_tournament([
-        (AquaFactory(), NormalStrategy()),
-        (HealingCreatureFactory(), DefensiveStrategy()),
-        (TransformCreatureFactory(), AggressiveStrategy()),
-    ])
+        print("\nTournament 2 (multiple)")
+        print(
+            "[ (Aquabub+Normal), (Healing+Defensive), "
+            "(Transform+Aggressive) ]"
+        )
+        run_tournament([
+            (AquaFactory(), NormalStrategy()),
+            (HealingCreatureFactory(), DefensiveStrategy()),
+            (TransformCreatureFactory(), AggressiveStrategy()),
+        ])
+    except KeyboardInterrupt:
+        print("\nInterrupted by user")
+    except Exception as error:
+        print(f"An unexpected error occurred: {error}")

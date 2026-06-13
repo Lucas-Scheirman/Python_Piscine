@@ -32,7 +32,9 @@ if __name__ == "__main__":
     try:
         print("Testing Creature with healing capability")
         test_healing()
-        print("Testing Creature with transform capability")
+        print("\nTesting Creature with transform capability")
         test_transform()
+    except KeyboardInterrupt:
+        print("\nInterrupted by user")
     except Exception as error:
         print(f"An unexpected error occurred: {error}")

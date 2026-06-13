@@ -29,11 +29,13 @@ if __name__ == "__main__":
         print("Testing factory")
         test_factory(flame_factory)
 
-        print("Testing factory")
+        print("\nTesting factory")
         test_factory(aqua_factory)
 
-        print("Testing battle")
+        print("\nTesting battle")
         battle(flame_factory, aqua_factory)
 
-    except Exception as e:
-        print(f"An unexpected error occurred during the battle: {e}")
+    except KeyboardInterrupt:
+        print("\nInterrupted by user")
+    except Exception as error:
+        print(f"An unexpected error occurred during the battle: {error}")
