@@ -1,66 +1,60 @@
 from ex0.creature import Creature
-from ex1.capabilities import HealCapability, TransformCapability
+from .capabilities import HealCapability, TransformCapability
 
 
 class Sproutling(Creature, HealCapability):
     def __init__(self) -> None:
-        self._name = "Sproutling"
-        self._type = "Grass"
+        super().__init__("Sproutling", "Grass")
 
     def attack(self) -> str:
-        return "Sproutling uses Vine Whip!"
+        return f"{self.name} uses Vine Whip!"
 
     def heal(self) -> str:
-        return "Sproutling heals itself for a small amount"
+        return f"{self.name} heals itself for a small amount"
 
 
 class Bloomelle(Creature, HealCapability):
     def __init__(self) -> None:
-        self._name = "Bloomelle"
-        self._type = "Grass/Fairy"
+        super().__init__("Bloomelle", "Grass/Fairy")
 
     def attack(self) -> str:
-        return "Bloomelle uses Petal Dance!"
+        return f"{self.name} uses Petal Dance!"
 
     def heal(self) -> str:
-        return "Bloomelle heals itself and others for a large amount"
+        return f"{self.name} heals itself and others for a large amount"
 
 
 class Shiftling(Creature, TransformCapability):
     def __init__(self) -> None:
-        self._name = "Shiftling"
-        self._type = "Normal"
-        self._transformed = False
+        super().__init__("Shiftling", "Normal")
 
     def attack(self) -> str:
         if self._transformed:
-            return "Shiftling performs a boosted strike!"
-        return "Shiftling attacks normally."
+            return f"{self.name} performs a boosted strike!"
+        return f"{self.name} attacks normally."
 
     def transform(self) -> str:
         self._transformed = True
-        return "Shiftling shifts into a sharper form!"
+        return f"{self.name} shifts into a sharper form!"
 
     def revert(self) -> str:
         self._transformed = False
-        return "Shiftling returns to normal."
+        return f"{self.name} returns to normal."
 
 
 class Morphagon(Creature, TransformCapability):
     def __init__(self) -> None:
-        self._name = "Morphagon"
-        self._type = "Normal/Dragon"
-        self._transformed = False
+        super().__init__("Morphagon", "Normal/Dragon")
 
     def attack(self) -> str:
         if self._transformed:
-            return "Morphagon unleashes a devastating morph strike!"
-        return "Morphagon attacks normally."
+            return f"{self.name} unleashes a devastating morph strike!"
+        return f"{self.name} attacks normally."
 
     def transform(self) -> str:
         self._transformed = True
-        return "Morphagon morphs into a dragonic battle form!"
+        return f"{self.name} morphs into a dragonic battle form!"
 
     def revert(self) -> str:
         self._transformed = False
-        return "Morphagon stabilizes its form."
+        return f"{self.name} stabilizes its form."

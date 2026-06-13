@@ -1,6 +1,6 @@
 from ex0.factory import CreatureFactory
 from ex0.creature import Creature
-from ex1.creature import Sproutling, Bloomelle, Shiftling, Morphagon
+from .creature import Sproutling, Bloomelle, Shiftling, Morphagon
 
 
 class HealingCreatureFactory(CreatureFactory):

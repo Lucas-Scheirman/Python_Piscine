@@ -1,4 +1,4 @@
-from ex0 import FlameFactory, AquaFactory, CreatureFactory
+from ex0 import CreatureFactory, FlameFactory, AquaFactory
 
 
 def test_factory(factory: CreatureFactory) -> None:
@@ -22,11 +22,18 @@ def battle(factory1: CreatureFactory, factory2: CreatureFactory) -> None:
 
 
 if __name__ == "__main__":
-    flame = FlameFactory()
-    aqua = AquaFactory()
-    print("Testing factory")
-    test_factory(flame)
-    print("Testing factory")
-    test_factory(aqua)
-    print("Testing battle")
-    battle(flame, aqua)
+    try:
+        flame_factory = FlameFactory()
+        aqua_factory = AquaFactory()
+
+        print("Testing factory")
+        test_factory(flame_factory)
+
+        print("Testing factory")
+        test_factory(aqua_factory)
+
+        print("Testing battle")
+        battle(flame_factory, aqua_factory)
+
+    except Exception as e:
+        print(f"An unexpected error occurred during the battle: {e}")
