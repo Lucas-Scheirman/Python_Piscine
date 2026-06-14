@@ -10,10 +10,8 @@ from ex2 import (
 from ex2.strategy import BattleStrategy
 
 
-Opponent = tuple[CreatureFactory, BattleStrategy]
-
-
-def run_tournament(opponents: list[Opponent]) -> None:
+def run_tournament(opponents:
+                   list[tuple[CreatureFactory, BattleStrategy]]) -> None:
     print("*** Tournament ***")
     print(f"{len(opponents)} opponents involved")
 
