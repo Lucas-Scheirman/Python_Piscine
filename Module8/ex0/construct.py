@@ -5,7 +5,7 @@ import site
 if sys.prefix != sys.base_prefix:
     print("MATRIX STATUS: Welcome to the construct\n")
     print(f"Current Python: {sys.executable}")
-    venv_name = os.path.basename(os.environ.get('VIRTUAL_ENV', " "))
+    venv_name = os.path.basename(os.environ.get('VIRTUAL_ENV', ""))
     print(f"Virtual Environment: {venv_name}")
     print(f"Environment Path: {os.environ.get('VIRTUAL_ENV')}\n")
     print("SUCCESS: You're in an isolated environment!")
@@ -19,6 +19,9 @@ else:
     print("Virtual Environment: None detected\n")
     print("WARNING: You're in the global environment!")
     print("The machines can see everything you install.\n")
+    print("Global package installation path:")
+    print(site.getsitepackages()[0])
+    print()
     print("To enter the construct, run:")
     print("python -m venv matrix_env")
     print("source matrix_env/bin/activate # On Unix")
