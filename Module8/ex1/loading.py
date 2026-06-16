@@ -12,14 +12,6 @@ def check_dependency(name: str, description: str) -> bool:
     return False
 
 
-def compare_managers() -> None:
-    print("\nDependency management (pip vs Poetry):")
-    print("  pip    -> requirements.txt | exact pins '==' "
-          "| pip install -r requirements.txt")
-    print("  Poetry -> pyproject.toml + poetry.lock | ranges '^' "
-          "| poetry install")
-
-
 if __name__ == "__main__":
     print("LOADING STATUS: Loading programs...\n")
     print("Checking dependencies:")
@@ -27,7 +19,6 @@ if __name__ == "__main__":
     ok = check_dependency("pandas", "Data manipulation ready") and ok
     ok = check_dependency("numpy", "Numerical computation ready") and ok
     ok = check_dependency("matplotlib", "Visualization ready") and ok
-    compare_managers()
     if ok:
         try:
             import numpy as np
