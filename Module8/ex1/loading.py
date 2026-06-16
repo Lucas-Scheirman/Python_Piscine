@@ -8,7 +8,7 @@ def check_dependency(name: str, description: str) -> bool:
         version = importlib.metadata.version(name)
         print(f"[OK] {name} ({version}) - {description}")
         return True
-    print(f"[MISSING] {name} - {description}")
+    print(f"[MISSING] {name} - library not found")
     return False
 
 
