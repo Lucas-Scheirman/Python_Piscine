@@ -18,7 +18,10 @@ if __name__ == "__main__":
         load_dotenv(env_path)
         print("ORACLE STATUS: Reading the Matrix...\n")
         print("Configuration loaded:")
-        mode = verif("MATRIX_MODE", "NOT SET")
+        mode = verif("MATRIX_MODE", "development")
+        if mode not in ("development", "production"):
+            print(f"WARNING: Unknown mode '{mode}', defaulting to development")
+            mode = "development"
         strict = mode == "production"
         db = verif("DATABASE_URL", "NOT SET", strict)
         api_key = verif("API_KEY", "NOT SET", strict)
