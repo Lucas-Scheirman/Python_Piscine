@@ -1,7 +1,11 @@
-from datetime import datetime
-from enum import Enum
-from typing import Optional
-from pydantic import BaseModel, Field, model_validator
+try:
+    from datetime import datetime
+    from enum import Enum
+    from typing import Optional
+    from pydantic import BaseModel, Field, ValidationError, model_validator
+except ImportError as e:
+    print(f"Error importing modules: {e}")
+    raise
 
 
 class ContactType(Enum):
@@ -28,7 +32,10 @@ class AlienContact(BaseModel):
             raise ValueError("Contact ID must start with 'AC'")
         if self.contact_type == ContactType.physical and not self.is_verified:
             raise ValueError("Physical contact reports must be verified")
-        if self.contact_type == ContactType.telepathic and self.witness_count < 3:
+        if (
+            self.contact_type == ContactType.telepathic
+            and self.witness_count < 3
+        ):
             raise ValueError(
                 "Telepathic contact requires at least 3 witnesses")
         if self.signal_strength > 7.0 and not self.message_received:
@@ -43,7 +50,7 @@ def main() -> None:
     print("=" * 38)
     contact = AlienContact(
         contact_id="AC_2024_001",
-        timestamp="2024-03-15T22:45:00",
+        timestamp=datetime(2024, 3, 15, 22, 45, 0),
         location="Area 51, Nevada",
         contact_type=ContactType.radio,
         signal_strength=8.5,
@@ -65,7 +72,7 @@ def main() -> None:
     try:
         AlienContact(
             contact_id="AC_2024_002",
-            timestamp="2024-03-16T01:00:00",
+            timestamp=datetime(2024, 3, 16, 1, 0, 0),
             location="Roswell, New Mexico",
             contact_type=ContactType.telepathic,
             signal_strength=6.0,
@@ -73,10 +80,13 @@ def main() -> None:
             witness_count=1,
             is_verified=False,
         )
-    except Exception as e:
+    except ValidationError as e:
         for error in e.errors():
             print(error["msg"].removeprefix("Value error, "))
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        print(f"An error occurred: {e}")
