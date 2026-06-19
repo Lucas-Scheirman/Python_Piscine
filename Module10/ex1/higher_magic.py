@@ -17,25 +17,28 @@ def power_amplifier(base_spell: Callable, multiplier: int) -> Callable:
 
 
 def conditional_caster(condition: Callable, spell: Callable) -> Callable:
-    def go_spell(target: str, power: int) -> str:
+    if not callable(condition) or not callable(spell):
+        raise TypeError("condition and spell must be callable")
+
+    def casted_spell(target: str, power: int) -> str:
         if condition(target, power):
             return spell(target, power)
         return "Spell fizzled"
-    return go_spell
+    return casted_spell
 
 
 def spell_sequence(spells: list[Callable]) -> Callable:
-    def go_spell(target: str, power: int) -> list:
+    def sequenced_spell(target: str, power: int) -> list:
         return [spell(target, power) for spell in spells]
-    return go_spell
+    return sequenced_spell
 
 
 def fireball(target: str, power: int) -> str:
-    return f"Fireball hits {target}"
+    return f"Fireball hits {target} for {power} damage"
 
 
 def heal(target: str, power: int) -> str:
-    return f"Heals {target}"
+    return f"Heal restores {target} for {power} HP"
 
 
 def main() -> None:
@@ -45,9 +48,9 @@ def main() -> None:
     print(f"Combined spell result: {result1}, {result2}")
 
     print("Testing power amplifier...")
-    power = 10
-    multiplier = 3
-    print(f"Original: {power}, Amplified: {power * multiplier}")
+    mega_fireball = power_amplifier(fireball, 3)
+    print(f"Original: {fireball('Dragon', 10)}")
+    print(f"Amplified: {mega_fireball('Dragon', 10)}")
 
     print("Testing conditional caster...")
     guarded = conditional_caster(lambda t, p: p >= 20, fireball)

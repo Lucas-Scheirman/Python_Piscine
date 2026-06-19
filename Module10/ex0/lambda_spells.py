@@ -3,20 +3,28 @@ def artifact_sorter(artifacts: list[dict]) -> list[dict]:
 
 
 def power_filter(mages: list[dict], min_power: int) -> list[dict]:
-    return list(filter(lambda x: x["power"] >= min_power, mages))
+    powerful_enough = filter(lambda x: x["power"] >= min_power, mages)
+    return list(powerful_enough)
 
 
 def spell_transformer(spells: list[str]) -> list[str]:
-    return list(map(lambda x: "* " + x + " *", spells))
+    transformed = map(lambda x: f"* {x} *", spells)
+    return list(transformed)
 
 
 def mage_stats(mages: list[dict]) -> dict:
+    if not mages:
+        return {"max_power": 0, "min_power": 0, "avg_power": 0.0}
+
+    max_power = max(mages, key=lambda x: x["power"])["power"]
+    min_power = min(mages, key=lambda x: x["power"])["power"]
+    total = sum(map(lambda x: x["power"], mages))
+    avg_power = round(total / len(mages), 2)
+
     return {
-        "max_power": max(mages, key=lambda x: x["power"])["power"],
-        "min_power": min(mages, key=lambda x: x["power"])["power"],
-        "avg_power": round(
-            sum(map(lambda x: x["power"], mages)) / len(mages), 2
-        ),
+        "max_power": max_power,
+        "min_power": min_power,
+        "avg_power": avg_power,
     }
 
 
